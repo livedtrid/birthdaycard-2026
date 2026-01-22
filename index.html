@@ -6,22 +6,25 @@
     <meta name="description" content="Convite aniversário 2026"/>
     <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
     <script src="./js/info-message.js" type="module"></script>
-    <script src="./effect-controls.js" type="module"></script>
-    <script src="./bloom.js" type="module"></script>
     <script src="./js/play-on-click.js"></script>
-	
-<meta property="og:title" content="Convite Jurássico 🦖🎂">
-<meta property="og:description" content="Vem comer uns bolo no dia 01/02/2026 para comemorar os meus 43 ano. Já to virando um dinossauro.">
-<meta property="og:image" content="https://livedtrid.github.io/birthdaycard-2026/convite.png">
-<meta property="og:url" content="https://livedtrid.github.io/birthdaycard-2026/">
-<meta property="og:type" content="website">
+    <script src="./js/hide-on-play.js"></script>
+
+    <meta property="og:title" content="Convite Jurássico 🦖🎂">
+    <meta property="og:description"
+          content="Vem comer uns bolo no dia 01/02/2026 para comemorar os meus 43 ano. Já to virando um dinossauro.">
+    <meta property="og:image" content="https://livedtrid.github.io/birthdaycard-2026/convite.png">
+    <meta property="og:url" content="https://livedtrid.github.io/birthdaycard-2026/">
+    <meta property="og:type" content="website">
 
     <script>
         AFRAME.registerComponent('base', {
             init: function () {
                 const el = this.el;
 
-                el.emit('goRight');
+                // Só começamos depois do entity estar totalmente carregado
+                el.addEventListener('loaded', () => {
+                    el.emit('goRight');
+                });
 
                 el.addEventListener('animationcomplete__right', () => {
                     el.emit('goLeft');
@@ -34,17 +37,16 @@
         });
     </script>
 
+
 </head>
 
 <body>
 <a-scene
-        bloom="threshold: 1.0; strength: 0.3; radius: 1;"
         background="color: #000000"
         renderer="toneMapping: ACESFilmic;"
         info-message="htmlSrc: #messageText"
 >
     <a-assets>
-        <!-- model by arturs.vitas https://skfb.ly/owUr9 -->
         <a-asset-item id="testbed" src="retro_8-bit_console_and_tv.glb"></a-asset-item>
         <a-asset-item id="messageText" src="message.html"></a-asset-item>
 
@@ -61,7 +63,31 @@
     </a-assets>
 
     <a-entity id="rig" position="0 0 2">
-        <a-entity id="camera" position="0 1.6 0" camera look-controls wasd-controls></a-entity>
+        <a-entity id="camera" position="0 1.6 0" camera>
+
+            <!-- sombra / outline -->
+            <a-entity
+                    position="0 0.3 -1.51"
+                    text="align: center;
+        width: 6.1;
+        wrapCount: 100;
+        color: black;
+        value: Toca no meu nariz"
+                    hide-on-play="#videoTex">
+
+            </a-entity>
+
+            <!-- texto principal -->
+            <a-entity
+                    position="0 0.3 -1.5"
+                    text="align: center;
+        width: 6;
+        wrapCount: 100;
+        color: white;
+        value: Toca no meu nariz"
+                    hide-on-play="#videoTex">
+            </a-entity>
+        </a-entity>
 
         <a-entity id="lhand" effect-controls="hand: left;"></a-entity>
 
@@ -69,26 +95,23 @@
     </a-entity>
     <a-entity
             id="base"
+            base
             geometry="primitive: cylinder; height: 0.1; radius: 1.93"
             position="0 0 -2"
             material="color: #201d1d"
             shadow
             animation__right="property: rotation;
-                      to: 0 90 0;
-                      dur: 1200;
+                      to: 0 20 0;
+                      dur: 6200;
                       easing: easeInOutSine;
                       startEvents: goRight"
 
             animation__left="property: rotation;
-                     to: 0 -90 0;
-                     dur: 1200;
+                     to: 0 -45 0;
+                     dur: 6200;
                      easing: easeInOutSine;
                      startEvents: goLeft"
     >
-
-        //animation="property: rotation; to: 0 180 0 ; loop: true; dur: 15000; easing: linear;"
-
-
         <a-entity id="tooncar" gltf-model="#testbed" position="-1.5 0 0" rotation="0 270 0" scale="0.5 0.5 0.5"
                   shadow>
 
@@ -115,6 +138,8 @@
         >
         </a-entity>
     </a-entity>
+
+
     <a-entity id="ambient" light="type: ambient; intensity: 0.48; color: #ffffff"></a-entity>
     <a-entity id="point01" light="color: #7cd2fe; intensity: 5; type: point;" position="0 3.51 -1"></a-entity>
 </a-scene>
